@@ -20,6 +20,7 @@ dependencies = [
 
 [project.scripts]
 autostages = "autostages.cli:main"
+autosearch = "autostages.cli:main"
 
 [tool.setuptools]
 include-package-data = true

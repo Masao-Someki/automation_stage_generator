@@ -30,6 +30,7 @@ from autostages.src.utils import load_resource
 
 DEFAULT_PROVIDER = "openai"
 DEFAULT_MODEL = "o4-mini-2025-04-16"
+APP_DIRNAME = ".autosearch"
 
 
 def detect_default_codex_model() -> str:
@@ -88,10 +89,13 @@ console = Console()
 
 def get_runtime_dirs() -> dict[str, Path]:
     current_dir = Path.cwd().resolve()
-    app_dir = current_dir / ".autostages"
-    legacy_app_dir = current_dir / ".autoespnet3"
-    if not app_dir.exists() and legacy_app_dir.exists():
-        legacy_app_dir.rename(app_dir)
+    app_dir = current_dir / APP_DIRNAME
+    legacy_dirs = [current_dir / ".autostages", current_dir / ".autoespnet3"]
+    if not app_dir.exists():
+        for legacy_app_dir in legacy_dirs:
+            if legacy_app_dir.exists():
+                legacy_app_dir.rename(app_dir)
+                break
     cache_dir = app_dir / "cache"
     config_path = app_dir / "config.json"
     stages_dir = app_dir / "stages"
@@ -115,6 +119,11 @@ def get_runtime_dirs() -> dict[str, Path]:
         "generated_stages_dir": generated_stages_dir,
         "session_path": session_path,
     }
+
+
+def init_workspace(runtime_dirs: dict[str, Path]) -> None:
+    load_app_config(runtime_dirs["config_path"])
+    console.print(f"[green]Initialized[/green] {runtime_dirs['app_dir']}")
 
 
 def clear_screen():
@@ -1002,12 +1011,14 @@ def execute_stage_flow(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="autostages stage workflow CLI")
+    parser = argparse.ArgumentParser(description="autosearch stage workflow CLI")
     parser.add_argument("--provider", default=None, help="Provider name (e.g., openai, gemini)")
     parser.add_argument("--model", default=None, help="Model name")
     parser.add_argument("--run-stage-script", default=None, help=argparse.SUPPRESS)
     parser.add_argument("--messages-in", default=None, help=argparse.SUPPRESS)
     parser.add_argument("--messages-out", default=None, help=argparse.SUPPRESS)
+    subparsers = parser.add_subparsers(dest="command")
+    subparsers.add_parser("init", help="Initialize .autosearch in current directory")
     args = parser.parse_args()
 
     if args.run_stage_script:
@@ -1021,6 +1032,10 @@ def main():
         return
 
     runtime_dirs = get_runtime_dirs()
+    if args.command == "init":
+        init_workspace(runtime_dirs)
+        return
+
     session = load_session(runtime_dirs["session_path"])
     app_config = load_app_config(runtime_dirs["config_path"])
     provider_name = args.provider or auto_detect_provider() or DEFAULT_PROVIDER

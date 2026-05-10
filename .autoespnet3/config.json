@@ -1,0 +1,22 @@
+{
+  "models": {
+    "stage_execution_openai": "o4-mini-2025-04-16",
+    "stage_execution_gemini": "gemini-pro",
+    "codex_cli": "gpt-5.3-codex",
+    "openai_api": "o4-mini-2025-04-16",
+    "google_api": "gemini-pro",
+    "claude_cli": "sonnet",
+    "claude_api": "claude-sonnet-4-20250514"
+  },
+  "orchestration": {
+    "executor_type": "local",
+    "poll_interval_sec": 10.0,
+    "max_stage_steps": 100,
+    "slurm": {
+      "partition": null,
+      "cpus_per_task": 1,
+      "mem": null,
+      "time": null
+    }
+  }
+}

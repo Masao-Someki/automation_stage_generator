@@ -1,0 +1,14 @@
+[workspace]
+authors = ["Masao-Someki <masao.someki@gmail.com>"]
+channels = ["conda-forge"]
+name = "05_autoresearch"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "==3.11"
+openai = ">=2.36.0,<3"
+google-generativeai = ">=0.8.6,<0.9"
+rich = ">=15.0.0,<16"

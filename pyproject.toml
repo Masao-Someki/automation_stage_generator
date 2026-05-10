@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autostages"
+version = "0.1.0"
+description = "Stage-driven automation workflow generator and runner"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "Masao Someki", email = "masao.someki@gmail.com" }
+]
+dependencies = [
+  "openai>=2.36.0,<3",
+  "google-generativeai>=0.8.6,<0.9",
+  "rich>=15.0.0,<16"
+]
+
+[project.scripts]
+autostages = "autostages.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["autostages*"]
+
+[tool.setuptools.package-data]
+autostages = [
+  "resources/*.md",
+  "resources/stages/*.md",
+  "resources/stage_references/*.py"
+]

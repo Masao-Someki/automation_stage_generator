@@ -1,0 +1,5 @@
+{
+  "menu_action": "1",
+  "generation_backend": "codex_cli",
+  "stage_script": "loop_end_stage.py"
+}

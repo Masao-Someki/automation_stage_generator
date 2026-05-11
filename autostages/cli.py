@@ -99,6 +99,7 @@ def get_runtime_dirs() -> dict[str, Path]:
                 legacy_app_dir.rename(app_dir)
                 break
     cache_dir = app_dir / "cache"
+    store_dir = app_dir / "store"
     config_path = app_dir / "config.json"
     stages_dir = app_dir / "stages"
     src_dir = app_dir / "src"
@@ -106,6 +107,7 @@ def get_runtime_dirs() -> dict[str, Path]:
     session_path = cache_dir / "session.json"
     app_dir.mkdir(parents=True, exist_ok=True)
     cache_dir.mkdir(parents=True, exist_ok=True)
+    store_dir.mkdir(parents=True, exist_ok=True)
     stages_dir.mkdir(parents=True, exist_ok=True)
     src_dir.mkdir(parents=True, exist_ok=True)
     generated_stages_dir.mkdir(parents=True, exist_ok=True)
@@ -115,6 +117,7 @@ def get_runtime_dirs() -> dict[str, Path]:
         "current_dir": current_dir,
         "app_dir": app_dir,
         "cache_dir": cache_dir,
+        "store_dir": store_dir,
         "config_path": config_path,
         "stages_dir": stages_dir,
         "src_dir": src_dir,
@@ -1062,6 +1065,7 @@ def main():
     provider_name = args.provider or auto_detect_provider() or DEFAULT_PROVIDER
     sys.path.insert(0, str(runtime_dirs["src_dir"]))
     AbsStage.set_cache_root(runtime_dirs["cache_dir"])
+    AbsStage.set_store_root(runtime_dirs["store_dir"])
 
     clear_screen()
     action = choose_menu_action(session)

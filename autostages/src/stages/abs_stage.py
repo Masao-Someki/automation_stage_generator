@@ -31,11 +31,17 @@ def should_offer_vscode_editor() -> bool:
 
 class AbsStage(ABC):
     cache_root = Path(".autostages/cache")
+    store_root = Path(".autosearch/store")
 
     @classmethod
     def set_cache_root(cls, cache_root: Path) -> None:
         cls.cache_root = Path(cache_root)
         cls.cache_root.mkdir(parents=True, exist_ok=True)
+
+    @classmethod
+    def set_store_root(cls, store_root: Path) -> None:
+        cls.store_root = Path(store_root)
+        cls.store_root.mkdir(parents=True, exist_ok=True)
 
     def __init__(self, id: str, description: str = "", final_message: str = ""):
         self.id = id
@@ -43,6 +49,9 @@ class AbsStage(ABC):
         self.final_message = final_message
         self.cache_path = self.cache_root / self.__class__.__name__
         self.cache_path.mkdir(parents=True, exist_ok=True)
+        self.store_path = self.store_root
+        self.store_path.mkdir(parents=True, exist_ok=True)
+        self.store = self.store_path
 
     def display_intro(self):
         if self.description:

@@ -93,6 +93,8 @@ Pin provider/model explicitly:
 
 ```bash
 autostages --provider openai --model o4-mini-2025-04-16
+autostages --provider codex --model gpt-5.4
+autostages --provider claude --model claude-sonnet-4-20250514
 ```
 
 ---

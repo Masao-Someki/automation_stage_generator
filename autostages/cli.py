@@ -56,6 +56,8 @@ DEFAULT_APP_CONFIG = {
     "models": {
         "stage_execution_openai": "o4-mini-2025-04-16",
         "stage_execution_gemini": "gemini-pro",
+        "stage_execution_codex": DEFAULT_CODEX_CLI_MODEL,
+        "stage_execution_claude": "claude-sonnet-4-20250514",
         "codex_cli": DEFAULT_CODEX_CLI_MODEL,
         "openai_api": "o4-mini-2025-04-16",
         "google_api": "gemini-pro",
@@ -133,10 +135,13 @@ def clear_screen():
 def auto_detect_provider() -> str:
     openai_key = os.environ.get("OPENAI_API_KEY")
     gemini_key = os.environ.get("GEMINI_API_KEY")
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY")
     if openai_key and not gemini_key:
         return "openai"
     if gemini_key and not openai_key:
         return "gemini"
+    if anthropic_key and not openai_key and not gemini_key:
+        return "claude"
     return None
 
 
@@ -493,6 +498,14 @@ def create_provider(provider_name: str, model_name: str):
         from autostages.src.providers.gemini_provider import GeminiProvider
 
         return GeminiProvider(model=model_name)
+    if provider_name == "codex":
+        from autostages.src.providers.codex_provider import CodexProvider
+
+        return CodexProvider(model=model_name)
+    if provider_name == "claude":
+        from autostages.src.providers.claude_provider import ClaudeProvider
+
+        return ClaudeProvider(model=model_name)
     raise ValueError(f"Unknown provider: {provider_name}")
 
 
@@ -515,6 +528,10 @@ def resolve_execution_model(
         return app_config["models"]["stage_execution_openai"]
     if provider_name == "gemini":
         return app_config["models"]["stage_execution_gemini"]
+    if provider_name == "codex":
+        return app_config["models"]["stage_execution_codex"]
+    if provider_name == "claude":
+        return app_config["models"]["stage_execution_claude"]
     return DEFAULT_MODEL
 
 
@@ -1012,7 +1029,11 @@ def execute_stage_flow(
 
 def main():
     parser = argparse.ArgumentParser(description="autosearch stage workflow CLI")
-    parser.add_argument("--provider", default=None, help="Provider name (e.g., openai, gemini)")
+    parser.add_argument(
+        "--provider",
+        default=None,
+        help="Provider name (e.g., openai, gemini, codex, claude)",
+    )
     parser.add_argument("--model", default=None, help="Model name")
     parser.add_argument("--run-stage-script", default=None, help=argparse.SUPPRESS)
     parser.add_argument("--messages-in", default=None, help=argparse.SUPPRESS)
